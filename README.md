@@ -4,7 +4,9 @@ Procedimento completo para identificar o modelo da placa, fazer backup da firmwa
 
 > Este guia é baseado no tutorial em vídeo: [https://www.youtube.com/watch?v=OMuoUVIoBBo](https://www.youtube.com/watch?v=OMuoUVIoBBo)
 
-> ⚠️ **Atenção:** esse processo substitui o Android pelo Linux (Armbian) e envolve risco real de **"brickar"** (inutilizar) a TV Box se algum passo for feito errado — especialmente na hora de gravar na eMMC. Faça o backup da firmware original (item 6) antes de prosseguir e siga a ordem dos passos com cuidado.
+> ⚠️ **Atenção:** esse processo substitui o Android pelo Linux (Armbian) e envolve risco de dar errado na hora de gravar na eMMC. Faça o backup da firmware original (item 6) antes de prosseguir e siga a ordem dos passos com cuidado.
+> 
+> **A boa notícia:** tecnicamente, dispositivos Rockchip **não "brickam" de verdade**. Se a memória interna (flash) não tiver um sistema inicializável, o aparelho sempre tentará dar boot pelo cartão SD. Caso o sistema interno fique corrompido e nem o SD funcione, ainda é possível forçar o **modo maskrom** curto-circuitando o pino de clock da eMMC na placa — veja a seção [Recuperação em caso de falha (Unbrick)](#recupera%C3%A7%C3%A3o-em-caso-de-falha-unbrick) no final deste guia.
 
 ---
 
@@ -15,6 +17,11 @@ Procedimento completo para identificar o modelo da placa, fazer backup da firmwa
 - Verifique se a memória RAM é **DDR2** ou **DDR3** (isso influencia qual imagem baixar).
 - **Importante:** essas placas **não dão boot por pendrive** — é obrigatório usar **cartão de memória (SD)**.
 - Use um cartão SD com **no mínimo 8 GB** de capacidade.
+- Identifique também o **tipo de memória flash interna** da placa: **NAND**, **eMMC** ou **eMCP**. Isso não depende do modelo comercial da TV Box — fabricantes usam o que for mais barato no momento da fabricação, mesmo em placas iguais.
+  - **eMMC**: memória não-volátil + controlador dedicado. Mais fácil de suportar.
+  - **eMCP**: igual à eMMC, mas com um banco de memória RAM (DDR) no mesmo chip.
+  - **NAND**: apenas a memória, sem controlador dedicado — mais difícil de suportar e **o kernel mainline atualmente não consegue acessá-la**. Exige cuidados especiais.
+  - O próprio **Multitool** detecta e avisa na tela inicial se a placa tiver um chip NAND.
 
 ---
 
@@ -24,7 +31,11 @@ Procedimento completo para identificar o modelo da placa, fazer backup da firmwa
 | --- | --- | --- |
 | Armbian Legacy (versões) | Imagem do sistema a ser instalado (usar 21.08.1, kernel 4.4) | [https://armbian.tnahosting.net/archive/rk322x-box/archive/](https://armbian.tnahosting.net/archive/rk322x-box/archive/) |
 | Multitool (.img) | Ferramenta de boot/backup/flash para RK322x | [https://www.mediafire.com/file/2wzb3y4er4zdmld/multitool.img/file](https://www.mediafire.com/file/2wzb3y4er4zdmld/multitool.img/file) |
-| balenaEtcher | Programa para gravar imagens em SD/USB | *\[adicionar link\]* |
+| balenaEtcher | Programa para gravar imagens em SD/USB | [https://etcher.balena.io/#download-etcher](https://etcher.balena.io/#download-etcher) |
+| Documentação oficial Armbian | Referência geral de instalação e escolha de imagem | [https://docs.armbian.com/getting-started/](https://docs.armbian.com/getting-started/) |
+| Fórum Armbian (RK322x) | Tópico da comunidade com placas e boards específicas | [https://forum.armbian.com/topic/34923-csc-armbian-for-rk322x-tv-box-boards/](https://forum.armbian.com/topic/34923-csc-armbian-for-rk322x-tv-box-boards/) |
+
+> **Escolhendo o tipo de imagem:** o Armbian geralmente oferece três variantes por placa — **Mínima/CLI** (apenas pacotes essenciais, sem interface gráfica), **Servidor** (utilitários de servidor pré-instalados, sem interface gráfica) e **Desktop** (ambiente gráfico completo). Para algumas placas com hardware mais limitado (caso de várias TV Boxes RK322x), só a imagem mínima está disponível. Para um cluster/servidor, a variante **Mínima** ou **Servidor** costuma ser a mais indicada.
 
 ---
 
@@ -41,7 +52,7 @@ Procedimento completo para identificar o modelo da placa, fazer backup da firmwa
 
 1. Ligue a TV Box normalmente (sem o cartão SD).
 2. Conecte-a ao Wi-Fi.
-3. Baixe e instale o aplicativo **AIDA64** diretamente na TV Box (Android) — não precisa ser baixado antes, só nesta etapa. Link: *\[adicionar link\]*
+3. Baixe e instale o aplicativo **AIDA64** diretamente na TV Box (Android) — não precisa ser baixado antes, só nesta etapa.
 4. Verifique as especificações da máquina (processador, RAM, etc.) e confirme se são compatíveis com o Armbian Legacy.
 
 > Só avance para a próxima etapa se o processador for compatível.
@@ -68,7 +79,7 @@ Procedimento completo para identificar o modelo da placa, fazer backup da firmwa
 ## 7. Preparar a nova imagem (Armbian Legacy)
 
 1. Baixe a imagem **Armbian Legacy** (link na tabela acima).
-2. No cartão SD, crie uma pasta chamada **imagens**.
+2. No cartão SD, coloque a ISO na pasta **imagens**.
 3. Coloque o arquivo da ISO dentro dessa pasta.
 
 > **Dica:** sempre **ejete o cartão SD corretamente** (em vez de puxá-lo direto) para evitar corrupção dos arquivos.
@@ -105,10 +116,30 @@ Procedimento completo para identificar o modelo da placa, fazer backup da firmwa
 
 ---
 
+## Recuperação em caso de falha (Unbrick)
+
+Se, por algum motivo, o sistema gravado na memória interna ficar corrompido ou não der boot corretamente, ainda é possível recuperar o aparelho na maioria dos casos:
+
+- **Boards com eMMC ou eMCP com pinos expostos:** é possível forçar o **modo maskrom** curto-circuitando o pino de clock da eMMC na placa, usando apenas uma chave de fenda. O aparelho entra em modo de recuperação e permite regravar o bootloader/sistema.
+  - [Procedimento genérico](https://forum.armbian.com/topic/12656-wip-armbian-for-rk322x-devices/?do=findComment&comment=99167) para placas com eMMC não-BGA.
+- **Boards mais novas com chip eMMC/eMCP em encapsulamento BGA** (sem pinos expostos) — o curto-circuito pode ser difícil ou impossível. Nesses casos, **redobre a atenção** antes de gravar na eMMC/eMCP: sempre teste a imagem primeiro rodando pelo cartão SD, para confirmar que funciona, antes de gravar na memória interna.
+
+**Links com pinos/procedimentos específicos por placa (exemplos da comunidade):**
+
+- [MXQPRO_V71 (eMCP)](https://forum.armbian.com/topic/12656-csc-armbian-for-rk322x-tv-boxes/?do=findComment&comment=157061)
+- [H20 (eMCP)](https://forum.armbian.com/topic/12656-csc-armbian-for-rk322x-tv-boxes/?do=findComment&comment=170092)
+- [ZQ01 (eMCP)](https://forum.armbian.com/topic/34923-csc-armbian-for-rk322x-tv-box-boards/?do=findComment&comment=183472)
+
+> ⚠️ **Caso especial — chip NAND:** se a placa usa NAND em vez de eMMC/eMCP, **evite atualizar o bootloader** a menos que você saiba exatamente o que está fazendo — o processo apaga o conteúdo existente e, se der errado, pode exigir repetir todo o procedimento de unbrick acima ou restaurar um bootloader mais antigo.
+
+---
+
 ## Links úteis
 
 - Tutorial base (vídeo): [https://www.youtube.com/watch?v=OMuoUVIoBBo](https://www.youtube.com/watch?v=OMuoUVIoBBo)
 - Armbian Legacy (versões): [https://armbian.tnahosting.net/archive/rk322x-box/archive/](https://armbian.tnahosting.net/archive/rk322x-box/archive/)
 - Multitool: [https://www.mediafire.com/file/2wzb3y4er4zdmld/multitool.img/file](https://www.mediafire.com/file/2wzb3y4er4zdmld/multitool.img/file)
-- balenaEtcher: *\[adicionar link\]*
-- AIDA64: *\[adicionar link\]*
+- balenaEtcher: [https://etcher.balena.io/#download-etcher](https://etcher.balena.io/#download-etcher)
+- Documentação oficial Armbian: [https://docs.armbian.com/getting-started/](https://docs.armbian.com/getting-started/)
+- Fórum Armbian (RK322x): [https://forum.armbian.com/topic/34923-csc-armbian-for-rk322x-tv-box-boards/](https://forum.armbian.com/topic/34923-csc-armbian-for-rk322x-tv-box-boards/)
+- Procedimento genérico de unbrick: [https://forum.armbian.com/topic/12656-wip-armbian-for-rk322x-devices/?do=findComment&comment=99167](https://forum.armbian.com/topic/12656-wip-armbian-for-rk322x-devices/?do=findComment&comment=99167)
