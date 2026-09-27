@@ -1,6 +1,6 @@
-# Guia: Instalação de Armbian Legacy em TV Box RK3228/RK3229
+# Guia: Instalação de Armbian em TV Box RK3228/RK3229
 
-Procedimento completo para identificar o modelo da placa, fazer backup da firmware original e instalar o Armbian Legacy (kernel 4.4) em TV Boxes com processador RK3228a, RK3228b ou RK3229.
+Procedimento completo para identificar o modelo da placa, fazer backup da firmware original e instalar o Armbian (kernel 4.4) em TV Boxes com processador RK3228a, RK3228b ou RK3229.
 
 > Este guia é baseado no tutorial em vídeo: [https://www.youtube.com/watch?v=OMuoUVIoBBo](https://www.youtube.com/watch?v=OMuoUVIoBBo)
 
@@ -25,17 +25,17 @@ Procedimento completo para identificar o modelo da placa, fazer backup da firmwa
 
 ---
 
-## 2. Download dos arquivos necessários
+## 2. Download e links uteis para instalação 
 
 | Arquivo | Descrição | Link |
 | --- | --- | --- |
-| Armbian Legacy (versões) | Imagem do sistema a ser instalado (usar 21.08.1, kernel 4.4) | [https://armbian.tnahosting.net/archive/rk322x-box/archive/](https://armbian.tnahosting.net/archive/rk322x-box/archive/) |
+| Armbian (versões) | Imagem do sistema a ser instalado (Armbian_21.02.1_Rk322x-box_buster_current_5.10.12_minimal.img.xz) | [https://armbian.tnahosting.net/archive/rk322x-box/archive/](https://armbian.tnahosting.net/archive/rk322x-box/archive/) |
 | Multitool (.img) | Ferramenta de boot/backup/flash para RK322x | [https://www.mediafire.com/file/2wzb3y4er4zdmld/multitool.img/file](https://www.mediafire.com/file/2wzb3y4er4zdmld/multitool.img/file) |
 | balenaEtcher | Programa para gravar imagens em SD/USB | [https://etcher.balena.io/#download-etcher](https://etcher.balena.io/#download-etcher) |
 | Documentação oficial Armbian | Referência geral de instalação e escolha de imagem | [https://docs.armbian.com/getting-started/](https://docs.armbian.com/getting-started/) |
 | Fórum Armbian (RK322x) | Tópico da comunidade com placas e boards específicas | [https://forum.armbian.com/topic/34923-csc-armbian-for-rk322x-tv-box-boards/](https://forum.armbian.com/topic/34923-csc-armbian-for-rk322x-tv-box-boards/) |
 
-> **Escolhendo o tipo de imagem:** o Armbian geralmente oferece três variantes por placa — **Mínima/CLI** (apenas pacotes essenciais, sem interface gráfica), **Servidor** (utilitários de servidor pré-instalados, sem interface gráfica) e **Desktop** (ambiente gráfico completo). Para algumas placas com hardware mais limitado (caso de várias TV Boxes RK322x), só a imagem mínima está disponível. Para um cluster/servidor, a variante **Mínima** ou **Servidor** costuma ser a mais indicada.
+> **Escolhendo o tipo de imagem:** o Armbian geralmente oferece três variantes por placa — **Mínima/CLI** (apenas pacotes essenciais, sem interface gráfica), **Servidor** (utilitários de servidor pré-instalados, sem interface gráfica) e **Desktop** (ambiente gráfico completo). Para algumas placas com hardware mais limitado (caso de várias TV Boxes RK322x), só a imagem mínima está disponível. Para um cluster/servidor, a variante **Mínima** ou **Servidor** costuma ser a mais indicada. Diferença entre **current** e **legacy**. **Current** (Utiliza um kernel mais novo para aquela geração do Armbian), **Legacy** (Utiliza o kernel antigo específico daquela plataforma).
 
 ---
 
@@ -76,9 +76,9 @@ Procedimento completo para identificar o modelo da placa, fazer backup da firmwa
 
 ---
 
-## 7. Preparar a nova imagem (Armbian Legacy)
+## 7. Preparar a nova imagem (Armbian)
 
-1. Baixe a imagem **Armbian Legacy** (link na tabela acima).
+1. Baixe a imagem **Armbian** (link na tabela acima).
 2. No cartão SD, coloque a ISO na pasta **imagens**.
 3. Coloque o arquivo da ISO dentro dessa pasta.
 
