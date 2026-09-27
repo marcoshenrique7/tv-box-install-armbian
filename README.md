@@ -25,7 +25,7 @@ Procedimento completo para identificar o modelo da placa, fazer backup da firmwa
 
 ---
 
-## 2. Download dos arquivos necessários
+## 2. Download e links uteis para instalação 
 
 | Arquivo | Descrição | Link |
 | --- | --- | --- |
