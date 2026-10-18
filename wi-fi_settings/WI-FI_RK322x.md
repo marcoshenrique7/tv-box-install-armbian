@@ -1,6 +1,6 @@
 # Conectar no Wi-Fi (RK322x com chip SSV, Armbian legacy 4.4.194)
 
-Complemento do guia de instalação. Vale para TV Box **RK3228A** com chip Wi-Fi **South Silicon Valley 6051p/6256p** (SDIO ID `3030:3030`).
+Complemento do [guia de instalação](../README.md). Vale para TV Box **RK3228A** com chip Wi-Fi **South Silicon Valley 6051p/6256p** (SDIO ID `3030:3030`). Outras placas podem ter outro chip Wi-Fi, e este guia não se aplica a elas.
 
 ## Requisito importante
 
@@ -76,7 +76,7 @@ Se só aparecer "Wired connection 1" e nenhuma rede Wi-Fi, não há interface Wi
 **Caminho B: criar o perfil manualmente (se a rede não aparece na lista, ou está oculta)**
 
 1. No menu inicial, selecione **Editar uma conexão** (*Edit a connection*) e aperte Enter.
-2. Selecione **<Adicionar>** (*Add*) e escolha o tipo **Wi-Fi**.
+2. Selecione **`<Adicionar>`** (*Add*) e escolha o tipo **Wi-Fi**.
 3. Preencha o formulário:
 
 | Campo | O que colocar |
@@ -89,8 +89,8 @@ Se só aparecer "Wired connection 1" e nenhuma rede Wi-Fi, não há interface Wi
 | Password | Aparece depois de escolher a segurança: digite a senha da rede |
 | Automatically connect | Deixe marcado `[X]` para reconectar sozinho a cada boot |
 
-4. Desça até o final do formulário, selecione **<OK>** e aperte Enter.
-5. Volte ao menu inicial com **Esc** (ou <Voltar>), abra **Ativar uma conexão**, selecione o perfil criado e ative.
+4. Desça até o final do formulário, selecione **`<OK>`** e aperte Enter.
+5. Volte ao menu inicial com **Esc** (ou `<Voltar>`), abra **Ativar uma conexão**, selecione o perfil criado e ative.
 
 Se a rede for antiga e não conectar com WPA & WPA2 Personal, tente **WPA2 Personal** ou confira a senha.
 

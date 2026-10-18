@@ -25,17 +25,19 @@ Procedimento completo para identificar o modelo da placa, fazer backup da firmwa
 
 ---
 
-## 2. Download e links uteis para instalação 
+## 2. Download e links úteis para instalação
 
 | Arquivo | Descrição | Link |
 | --- | --- | --- |
-| Armbian (versões) | Imagem do sistema a ser instalado (Armbian_21.02.1_Rk322x-box_buster_current_5.10.12_minimal.img.xz) | [https://armbian.tnahosting.net/archive/rk322x-box/archive/](https://armbian.tnahosting.net/archive/rk322x-box/archive/) |
+| Armbian (versões) | Imagem do sistema a ser instalado: `Armbian_21.05.1_Rk322x-box_buster_legacy_4.4.194.img.xz` (Debian Buster, kernel legacy 4.4.194). É a imagem usada neste projeto e a única em que o Wi-Fi funcionou (veja o [guia de Wi-Fi](wi-fi_settings/WI-FI_RK322x.md)). | [Download direto](https://armbian.tnahosting.net/archive/rk322x-box/archive/Armbian_21.05.1_Rk322x-box_buster_legacy_4.4.194.img.xz) · [Todas as versões](https://armbian.tnahosting.net/archive/rk322x-box/archive/) |
 | Multitool (.img) | Ferramenta de boot/backup/flash para RK322x | [https://www.mediafire.com/file/2wzb3y4er4zdmld/multitool.img/file](https://www.mediafire.com/file/2wzb3y4er4zdmld/multitool.img/file) |
 | balenaEtcher | Programa para gravar imagens em SD/USB | [https://etcher.balena.io/#download-etcher](https://etcher.balena.io/#download-etcher) |
 | Documentação oficial Armbian | Referência geral de instalação e escolha de imagem | [https://docs.armbian.com/getting-started/](https://docs.armbian.com/getting-started/) |
 | Fórum Armbian (RK322x) | Tópico da comunidade com placas e boards específicas | [https://forum.armbian.com/topic/34923-csc-armbian-for-rk322x-tv-box-boards/](https://forum.armbian.com/topic/34923-csc-armbian-for-rk322x-tv-box-boards/) |
 
-> **Escolhendo o tipo de imagem:** o Armbian geralmente oferece três variantes por placa — **Mínima/CLI** (apenas pacotes essenciais, sem interface gráfica), **Servidor** (utilitários de servidor pré-instalados, sem interface gráfica) e **Desktop** (ambiente gráfico completo). Para algumas placas com hardware mais limitado (caso de várias TV Boxes RK322x), só a imagem mínima está disponível. Para um cluster/servidor, a variante **Mínima** ou **Servidor** costuma ser a mais indicada. Diferença entre **current** e **legacy**. **Current** (Utiliza um kernel mais novo para aquela geração do Armbian), **Legacy** (Utiliza o kernel antigo específico daquela plataforma).
+> **Escolhendo o tipo de imagem:** o Armbian geralmente oferece três variantes por placa — **Mínima/CLI** (apenas pacotes essenciais, sem interface gráfica), **Servidor** (utilitários de servidor pré-instalados, sem interface gráfica) e **Desktop** (ambiente gráfico completo). Para algumas placas com hardware mais limitado (caso de várias TV Boxes RK322x), só a imagem mínima está disponível. Para um cluster/servidor, a variante **Mínima** ou **Servidor** costuma ser a mais indicada.
+>
+> **Current x Legacy:** a imagem **current** usa um kernel mais novo para aquela geração do Armbian, enquanto a **legacy** usa o kernel antigo específico daquela plataforma. Neste guia usamos a **legacy (kernel 4.4)**.
 
 ---
 
@@ -53,7 +55,7 @@ Procedimento completo para identificar o modelo da placa, fazer backup da firmwa
 1. Ligue a TV Box normalmente (sem o cartão SD).
 2. Conecte-a ao Wi-Fi.
 3. Baixe e instale o aplicativo **AIDA64** diretamente na TV Box (Android) — não precisa ser baixado antes, só nesta etapa.
-4. Verifique as especificações da máquina (processador, RAM, etc.) e confirme se são compatíveis com o Armbian Legacy.
+4. Verifique as especificações da máquina e confirme os critérios do **item 1**: arquitetura **armhf**, processador **RK3228a, RK3228b ou RK3229** e RAM **DDR2 ou DDR3**.
 
 > Só avance para a próxima etapa se o processador for compatível.
 
@@ -78,9 +80,8 @@ Procedimento completo para identificar o modelo da placa, fazer backup da firmwa
 
 ## 7. Preparar a nova imagem (Armbian)
 
-1. Baixe a imagem **Armbian** (link na tabela acima).
-2. No cartão SD, coloque a ISO na pasta **imagens**.
-3. Coloque o arquivo da ISO dentro dessa pasta.
+1. Baixe a imagem **Armbian legacy 4.4.194** (`Armbian_21.05.1_Rk322x-box_buster_legacy_4.4.194.img.xz`, link na tabela acima).
+2. No cartão SD, coloque o arquivo da imagem dentro da pasta **imagens**.
 
 > **Dica:** sempre **ejete o cartão SD corretamente** (em vez de puxá-lo direto) para evitar corrupção dos arquivos.
 
@@ -101,18 +102,14 @@ Procedimento completo para identificar o modelo da placa, fazer backup da firmwa
 ## 9. Primeiro boot com o novo sistema
 
 1. Reconecte a fonte de energia — a TV Box fará boot diretamente com a nova imagem instalada (sem o cartão SD). O LED costuma piscar/mudar de cor e, após alguns segundos, o HDMI liga com as mensagens de inicialização.
-2. Recomenda-se usar **cabo de rede (Ethernet)** nessa primeira inicialização, em vez de Wi-Fi.
+2. Recomenda-se usar **cabo de rede (Ethernet)** nessa primeira inicialização, em vez de Wi-Fi. O Wi-Fi depende do chip de cada placa e só foi testado em RK3228A com chip SSV: veja o [guia de Wi-Fi](wi-fi_settings/WI-FI_RK322x.md).
 3. No primeiro boot, o Armbian pedirá uma configuração inicial via terminal:
    - Defina a **senha do usuário root**.
    - Escolha o **shell padrão** (recomendado: `bash`, geralmente opção `1`).
    - Crie um **usuário comum** (nome e senha).
    - Confirme o **idioma/localização** detectado automaticamente (`y` para confirmar).
 4. Após o login, use o comando `armbian-config` para ajustar fuso horário, locales e outras configurações do sistema.
-5. Atualize o sistema:
-
-   ```
-   sudo apt update && sudo apt upgrade
-   ```
+5. Atualize o sistema. Esta imagem é baseada no Debian Buster, que já foi arquivado, então o `apt update` com os repositórios padrão pode falhar. Siga o guia [Configuração do APT — Armbian RK322x](apt_install/APT-ARMBIAN-RK322X.md) antes de rodar `apt upgrade`.
 
 ---
 
@@ -143,3 +140,5 @@ Se, por algum motivo, o sistema gravado na memória interna ficar corrompido ou 
 - Documentação oficial Armbian: [https://docs.armbian.com/getting-started/](https://docs.armbian.com/getting-started/)
 - Fórum Armbian (RK322x): [https://forum.armbian.com/topic/34923-csc-armbian-for-rk322x-tv-box-boards/](https://forum.armbian.com/topic/34923-csc-armbian-for-rk322x-tv-box-boards/)
 - Procedimento genérico de unbrick: [https://forum.armbian.com/topic/12656-wip-armbian-for-rk322x-devices/?do=findComment&comment=99167](https://forum.armbian.com/topic/12656-wip-armbian-for-rk322x-devices/?do=findComment&comment=99167)
+- Configuração do APT (Debian Buster): [apt_install/APT-ARMBIAN-RK322X.md](apt_install/APT-ARMBIAN-RK322X.md)
+- Conectar no Wi-Fi (RK3228A com chip SSV): [wi-fi_settings/WI-FI_RK322x.md](wi-fi_settings/WI-FI_RK322x.md)

@@ -1,6 +1,6 @@
 # Configuração do APT — Armbian RK322x
 
-Procedimento utilizado para corrigir e atualizar o APT em uma TV Box RK322x com Armbian baseado no Debian Buster.
+Procedimento utilizado para corrigir e atualizar o APT em uma TV Box RK322x com Armbian baseado no Debian Buster. Ele se aplica à imagem **legacy (kernel 4.4.194)** usada neste projeto: `Armbian_21.05.1_Rk322x-box_buster_legacy_4.4.194.img.xz`.
 
 ## 1. Verificar o sistema
 
@@ -61,6 +61,12 @@ Confirmar:
 ```bash
 date
 ```
+
+> **Atenção:** a data ajustada à mão pode se perder quando a TV Box reiniciar. Muitas TV Boxes não têm bateria de relógio, mas isso não foi confirmado para este modelo. Se o sistema tiver o `systemd-timesyncd`, é possível sincronizar a data automaticamente pela rede:
+>
+> ```bash
+> sudo timedatectl set-ntp true
+> ```
 
 ## 4. Fazer backup do APT
 
@@ -155,13 +161,19 @@ Ele **não desativa a verificação das assinaturas GPG**.
 apt list --upgradable
 ```
 
+> **Confira a lista antes de atualizar.** Esta imagem usa um kernel legacy específico (4.4.194), do qual o Wi-Fi depende. Se aparecerem pacotes de kernel, de device tree, de bootloader ou de firmware (os nomes costumam começar com `linux-image`, `linux-dtb`, `linux-u-boot` ou `armbian-firmware`, mas variam), avalie com cuidado antes de atualizá-los. Para impedir que um pacote seja atualizado, use:
+>
+> ```bash
+> sudo apt-mark hold NOME_DO_PACOTE
+> ```
+
 ## 9. Atualizar os pacotes
 
 ```bash
 sudo apt upgrade
 ```
 
-Para aceitar automaticamente:
+Opção avançada, para aceitar automaticamente (use só depois de conferir a lista do passo 8):
 
 ```bash
 sudo apt upgrade -y
